@@ -1,0 +1,91 @@
+<html>
+<style>
+	.card{
+		width:300px;
+		background-color: aquamarine;
+		padding:10px;
+		margin:10px;
+		display:inline-block;
+		border-radius:10px;
+		box-shadow:grey 5px 5px 5px;
+	}
+	h1{
+		font-family:"Comic Sans MS";
+		text-shadow: white 2px white 2px white 2px white;
+	}
+	p,a{
+		font-size:14pt;
+		font-family:"Comic Sans MS";
+	}
+	img{
+		width:90%;
+		margin:5px;
+		border-radius:10px;
+		box-shadow:grey 5px 5px 5px;
+	}
+	a{
+		background-color:red;
+		text-decoration:none;
+		color:white;
+		font-weight:bold;
+		padding:5px;
+		border-radius:10px;
+		box-shadow:black 5px 5px 5px;
+	}
+</style>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+<script type="text/template" id="ctmp">
+	<div class="card">
+		<h1> {{category}} </h1>
+		<p> {{borough}} </p>
+		<p> ( {{startdatetime}} , {{enddatetime}} )</p>
+		<p><marquee behavior="scroll" direction="left"> {{parkingheld}} </marquee></p>
+		
+		<marquee> {{ city }} </marquee>
+	</div>
+</script>
+<script>
+	///document.write("Different permits: Television, Film, Theater, WEB, Commercial, Still Photography")
+	var data;
+	function search(){				
+		$.getJSON("https://data.cityofnewyork.us/resource/tg4x-b46p.json",function(results){
+			data = results;
+		})
+	}
+	function display311Calls(){
+		var build = "";
+		var output = document.getElementById("output")
+		var category = document.getElementById("category")
+		var tmp = document.getElementById("ctmp").innerHTML;
+		var count = 0;
+		
+		for(var index = 0; index < data.length; index++){
+			if(data[index].category.toLowerCase().indexOf(category.value.toLowerCase()) !=  -1){
+				build += Mustache.render(tmp,data[index]);
+				count += 1;
+			}
+		}	
+
+		output.innerHTML = "<h1>Category: " + count + "</h1><br>" + build;
+		///output.innerHTML = "<h2>Different permits: Television, Film, Theater, WEB, Commercial, Still Photography </h2>"
+	}
+
+</script>
+<body>
+
+<body onload="search()">
+	<!--<input type="text" id="zip" placeholder="Enter Zip">-->
+	<input type="text" id="category" placeholder="Category">
+	<button onclick="display311Calls()">Display</button>
+	<div id="output">
+	</div>
+</body>
+<body>
+    <h1>Different Permits: Television, Film, Theater, WEB, Commercial, Still Photography.</h1>
+    <p>This code shows the different kinds of permits there are, and also where they were used in NY.</p>
+</body>
+
+</html>
